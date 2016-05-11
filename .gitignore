@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+db.sqlite3
+migrations/
+local_settings.py
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Ipython Notebook
+.ipynb_checkpoints
+
+# hidden project files
+pdx_crime_project/hidden.py
+
+# Virtual Environment
+pdx_crime_venv/
+
+.DS_Store
+
