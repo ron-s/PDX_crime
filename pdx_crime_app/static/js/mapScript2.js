@@ -29,22 +29,42 @@ function initialize() {
   var map = new google.maps.Map(document.getElementById("map"),
           myOptions);
 
-  map.data.loadGeoJson( "http://localhost:8000/pdx_crime_app/pdx_crime_app_crimemodeltemplate?format=json&offense=Homicide" );
-
-  setMarkers(map)
-
+  //setMarkers(map);
 
   }
 
-function setMarkers(map, loc) {
-        // create an array of markers to add to the google map
-        for (var i in loc) {
-            var obj = loc[i];
-            var name = obj.name;
-            var lat = features.geometry.coordinates[1];
-            var long = features.geometry.coordinates[0];
+function getData() {
+  //var data = new google.maps.Data();
+  //var test = data.loadGeoJson("http://localhost:8000/pdx_crime_app/pdx_crime_app_crimemodeltemplate?format=json&offense=Homicide");
+  $.getJSON("http://localhost:8000/pdx_crime_app/pdx_crime_app_crimemodeltemplate?format=json&offense=Homicide",
+    function (data) {
+      console.log("inside getData", data);
+      setMarkers(data)
+    })
+ 
 
-            console.log(obj)
+}
+
+
+
+function setMarkers(object) {
+        // create an array of markers to add to the google map
+        console.log("we passed into setMarkers", object);
+          var features = object.features;
+          //console.log(features);
+            for (var i in features) {
+            var obj = features[i];
+            //console.log("obj is", obj);
+            var offense = features[i].properties.offense;
+            var lat = features[i].geometry.coordinates[1];
+            var long = features[i].geometry.coordinates[0];
+
+            var date = features[i].properties.date
+            var time = features[i].properties.time
+            var neighborhd = features[i].properties.neighborhd
+
+            console.log(offense, date, time, neighborhd, lat, long);
+            //console.log(object)
 
             latlngset = new google.maps.LatLng(lat, long);
             //define where to set the markers
@@ -53,17 +73,7 @@ function setMarkers(map, loc) {
             });
             map.setCenter(marker.getPosition());
 
-            //display the inspection result, inspection score and description of results
-            if (obj.results.result_1) {
-                inspectionResult = obj.results.result_1.inspection_result
-                inspectionScore = obj.results.result_1.inspection_score
-                description = obj.results.result_1.description
-            } else {
-
-                inspectionResult = "No Result"
-                inspectionScore = "None"
-                description = "None"
-            }
+            
 
 
             // content string to place in the infowindow
@@ -83,6 +93,18 @@ function setMarkers(map, loc) {
             })(marker, content, infowindow));
         }
     }
+
+
+function closeInfos() {
+    if (infos.length > 0) {
+        // detach the info-window from the marker ... undocumented in the API docs
+        infos[0].set("marker", null);
+        // and close it
+        infos[0].close();
+        // blank the array
+        infos.length = 0;
+    }
+}
 
 /*
 // Dude this is genuine KS brainpower or something.
@@ -228,4 +250,4 @@ $(document).ready(function() {
 });
 
 initialize();
-
+getData(map);
