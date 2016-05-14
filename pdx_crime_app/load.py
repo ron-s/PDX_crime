@@ -17,7 +17,7 @@ crime2014_mapping = {
 }
 
 # Copypaste from geodjango tutorial.
-crime2014_shp = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data', 'pdxcrime_2014.shp'))
+crime2014_shp = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data', 'Crime2014-xyfix2.shp'))
 
 def run(verbose=True):
     lm = LayerMapping(CrimeModelTemplate, crime2014_shp, crime2014_mapping,

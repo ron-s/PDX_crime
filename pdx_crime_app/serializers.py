@@ -7,7 +7,7 @@ Serializes geospatial fields from models into GeoJSON data.
 class CrimeDataSerializer(GeoFeatureModelSerializer):
     class Meta:
         geo_field = 'geom'
-        fields = ('offense', 'date', 'time', 'neighborhd')
+        fields = ('offense', 'date', 'time', 'neighborhd', 'xcoordi', 'ycoordi')
         abstract = True
 
 

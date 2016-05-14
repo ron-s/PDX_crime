@@ -33,21 +33,21 @@ function initialize() {
 
   }
 
-function getData() {
+function getData(map) {
   //var data = new google.maps.Data();
   //var test = data.loadGeoJson("http://localhost:8000/pdx_crime_app/pdx_crime_app_crimemodeltemplate?format=json&offense=Homicide");
   $.getJSON("http://localhost:8000/pdx_crime_app/pdx_crime_app_crimemodeltemplate?format=json&offense=Homicide",
     function (data) {
       console.log("inside getData", data);
-      setMarkers(data)
-    })
+      setMarkers(map, data);
+    });
  
 
 }
 
 
 
-function setMarkers(object) {
+function setMarkers(map, object) {
         // create an array of markers to add to the google map
         console.log("we passed into setMarkers", object);
           var features = object.features;
@@ -56,55 +56,56 @@ function setMarkers(object) {
             var obj = features[i];
             //console.log("obj is", obj);
             var offense = features[i].properties.offense;
-            var lat = features[i].geometry.coordinates[1];
-            var long = features[i].geometry.coordinates[0];
+            var lat = (features[i].geometry.coordinates[1]).toFixed(10);
+            var long = (features[i].geometry.coordinates[0]).toFixed(10);
+            console.log(lat, long);
 
-            var date = features[i].properties.date
-            var time = features[i].properties.time
-            var neighborhd = features[i].properties.neighborhd
+            var date = features[i].properties.date;
+            var time = features[i].properties.time;
+            var neighborhd = features[i].properties.neighborhd;
 
-            console.log(offense, date, time, neighborhd, lat, long);
-            //console.log(object)
+            //console.log(offense, date, time, neighborhd, lat, long);
+            var latlngset = new google.maps.LatLng(lat, long);
+            console.log(latlngset);
 
-            latlngset = new google.maps.LatLng(lat, long);
             //define where to set the markers
             var marker = new google.maps.Marker({
-                map: map, title: name, position: latlngset
+                map: map, title: offense, position: latlngset
             });
-            map.setCenter(marker.getPosition());
+            //map.setCenter(marker.getPosition());
 
             
 
 
-            // content string to place in the infowindow
-            var content = '<div class="infowindow"><b><a href="#" onclick="slidePanel(\'' + obj.bus_id + '\');return false;">' + obj.name + '</a></b></div>' + '<div class="infowindow">' + obj.address + '</div>' + '<div class="infowindow">' + 'Inspection Result:  ' + inspectionResult + '</div>' + '<div class="infowindow">' + 'Inspection Score:  ' + inspectionScore + '</div>' + '<div class="infowindow">' + description + '</div>';
+            // // content string to place in the infowindow
+            // var content = '<div class="infowindow"><b><a href="#" onclick="slidePanel(\'' + obj.bus_id + '\');return false;">' + obj.name + '</a></b></div>' + '<div class="infowindow">' + obj.address + '</div>' + '<div class="infowindow">' + 'Inspection Result:  ' + inspectionResult + '</div>' + '<div class="infowindow">' + 'Inspection Score:  ' + inspectionScore + '</div>' + '<div class="infowindow">' + description + '</div>';
 
-            var infowindow = new google.maps.InfoWindow();
-            // add a click event listener when the user clicks on a marker to display the infowindow
-            google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
-                return function () {
-                    // close the previous info-window
-                    closeInfos();
-                    infowindow.setContent(content);
-                    infowindow.open(map, marker);
-                    // keep the handle, in order to close it on next click event
-                    infos[0] = infowindow;
-                };
-            })(marker, content, infowindow));
+            // var infowindow = new google.maps.InfoWindow();
+            // // add a click event listener when the user clicks on a marker to display the infowindow
+            // google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
+            //     return function () {
+            //         // close the previous info-window
+            //         closeInfos();
+            //         infowindow.setContent(content);
+            //         infowindow.open(map, marker);
+            //         // keep the handle, in order to close it on next click event
+            //         infos[0] = infowindow;
+            //     };
+            // })(marker, content, infowindow));
         }
     }
 
 
-function closeInfos() {
-    if (infos.length > 0) {
-        // detach the info-window from the marker ... undocumented in the API docs
-        infos[0].set("marker", null);
-        // and close it
-        infos[0].close();
-        // blank the array
-        infos.length = 0;
-    }
-}
+// function closeInfos() {
+//     if (infos.length > 0) {
+//         // detach the info-window from the marker ... undocumented in the API docs
+//         infos[0].set("marker", null);
+//         // and close it
+//         infos[0].close();
+//         // blank the array
+//         infos.length = 0;
+//     }
+// }
 
 /*
 // Dude this is genuine KS brainpower or something.
@@ -250,4 +251,4 @@ $(document).ready(function() {
 });
 
 initialize();
-getData(map);
+getData();
