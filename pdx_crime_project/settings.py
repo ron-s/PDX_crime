@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'pdx_crime_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'pdxcrime',
+        'NAME': 'pdxcrime2',
         'USER': 'rons',
         'PASSWORD': password,
         'HOST': 'localhost',
