@@ -1,30 +1,20 @@
-$(window).load(function() {
-    // Construct the catalog query string
-    var url = 'http://localhost:8000/pdx_crime_app/pdx_crime_app_crimemodeltemplate?format=json&offense=Homicide';
-    
-    // Intialize our map
-    var center = new google.maps.LatLng(45.5200, -122.6819);
-    var mapOptions = {
-      zoom: 12,
-      center: center
-    }
-    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-    var infos = [];
-
+function renderMap(checkboxID){
 
   $.ajax({
-      url: "http://localhost:8000/pdx_crime_app/pdx_crime_app_crimemodeltemplate?format=json&offense=Homicide",
+      url: "http://localhost:8000/pdx_crime_app/pdx_crime_app_crimemodeltemplate?format=json&offense=" + checkboxID ,
       type: 'GET',
       headers : {Accept: 'application/json'},
       dataType: 'json',
       success:function(data) {
           data.features.forEach(function (obj) {
+          
           var marker = new google.maps.Marker({
               position: new google.maps.LatLng(obj.properties.ycoordi, obj.properties.xcoordi),
               map: map,
               title: "offense"
               });
+          
           var content = '<div class="infowindow"><b>' + obj.properties.offense + '</b></div>' + '<div class="infowindow">' + obj.properties.date + '</div>' + '<div class="infowindow">' + obj.properties.time + '</div>' + '<div class="infowindow">' + obj.properties.neighborhd + '</div>';
 
             var infowindow = new google.maps.InfoWindow();
@@ -41,10 +31,17 @@ $(window).load(function() {
             })(marker, content, infowindow));
         });
     }
-        });
+  });
+}
 
+var center = new google.maps.LatLng(45.5200, -122.6819);
+    var mapOptions = {
+      zoom: 12,
+      center: center
+    }
+    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-
+    var infos = [];
 
 
     function closeInfos() {
@@ -57,4 +54,73 @@ $(window).load(function() {
             infos.length = 0;
         }
     }
+
+    function removeLayer(checkboxID) {
+      map.removeLayer(vectorLayer);
+    }
+
+    renderMap();
+
+
+// $(window).load(function() {
+
+    
+//     // Intialize our map
+    
+// });
+
+//----Event Listeners---------------------------------------------------------//
+$(document).ready(function() {
+  //----Checkbox event listener----//
+  $(":checkbox").change(function(event) {
+    var id = event.currentTarget.id;
+  renderMap(id);
+  //   $(".loader").fadeOut("slow");
+  //   var $this = $(this);
+  //   var checkID = $this.attr('id');
+  //   if ($this.is(':checked')) {
+  //     loadGeoJSON(checkID);  
+  //   } else {
+  // // Removes selected layer based on 'name' property
+  //     map.getLayers().forEach(function(layer){
+  //       if (layer.get('name') === checkID)
+  //         layer.setVisible(checkID.checked);
+  //     })
+  //   } 
+  });
+
+  
+  //----Menu Flyout----//
+  $("#menu-toggle").click(function(evt) {
+    evt.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+  });
+  
+  
+  //---Violent Crime Mapper----//
+  //KS: TODO: THERE SHOULD BE A LESS HACKY WAY TO DO THIS.
+  $('#violence').click(function() {
+    $(".loader").fadeOut("slow");
+    $(':checkbox').prop('checked', false);
+    $("[id='Aggravated Assault']").prop('checked', true);
+    loadGeoJSON('Aggravated Assault');
+    $('#Homicide').prop('checked', true);
+    loadGeoJSON('Homicide');
+    $('#Rape').prop('checked', true);
+    loadGeoJSON('Rape')
+    $('#Robbery').prop('checked', true);
+    loadGeoJSON('Robbery');
+  });
+  
+  //----Clear all selections----/
+  //KS: HACK ALERT
+  $('#clear').click(function(){
+    $(':checkbox').prop('checked', false);
+    map.getLayers.forEach(function(layer){
+      if (layer.get('name') !== 'main') {
+        layer.setVisible(false);
+      }
+    });
+  });
+
 });
