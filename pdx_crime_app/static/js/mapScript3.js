@@ -62,12 +62,6 @@ var center = new google.maps.LatLng(45.5200, -122.6819);
     renderMap();
 
 
-// $(window).load(function() {
-
-    
-//     // Intialize our map
-    
-// });
 
 //----Event Listeners---------------------------------------------------------//
 $(document).ready(function() {
@@ -75,18 +69,7 @@ $(document).ready(function() {
   $(":checkbox").change(function(event) {
     var id = event.currentTarget.id;
   renderMap(id);
-  //   $(".loader").fadeOut("slow");
-  //   var $this = $(this);
-  //   var checkID = $this.attr('id');
-  //   if ($this.is(':checked')) {
-  //     loadGeoJSON(checkID);  
-  //   } else {
-  // // Removes selected layer based on 'name' property
-  //     map.getLayers().forEach(function(layer){
-  //       if (layer.get('name') === checkID)
-  //         layer.setVisible(checkID.checked);
-  //     })
-  //   } 
+
   });
 
   
