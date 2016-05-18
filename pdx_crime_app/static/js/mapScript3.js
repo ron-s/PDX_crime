@@ -1,3 +1,4 @@
+var markers = [];
 
 function renderMap(checkboxID){
 
@@ -14,7 +15,8 @@ function renderMap(checkboxID){
               map: map,
               title: "offense"
               });
-          
+          markers.push(marker);
+
           var content = '<div class="infowindow"><b>' + obj.properties.offense + '</b></div>' + '<div class="infowindow">' + obj.properties.date + '</div>' + '<div class="infowindow">' + obj.properties.time + '</div>' + '<div class="infowindow">' + obj.properties.neighborhd + '</div>';
 
             var infowindow = new google.maps.InfoWindow();
@@ -55,9 +57,9 @@ var center = new google.maps.LatLng(45.5200, -122.6819);
         }
     }
 
-    function removeLayer(checkboxID) {
-      map.removeLayer(vectorLayer);
-    }
+    // function removeLayer(checkboxID) {
+    //   map.removeLayer(vectorLayer);
+    // }
 
     renderMap();
 
@@ -79,31 +81,50 @@ $(document).ready(function() {
     $("#wrapper").toggleClass("toggled");
   });
   
-  
+  // Sets the map on all markers in the array.
+  function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
+
+  // Removes the markers from the map, but keeps them in the array.
+  function clearMarkers() {
+    setMapOnAll(null);
+  }
+
+  // Shows any markers currently in the array.
+  function showMarkers() {
+    setMapOnAll(map);
+  }
+
+  // Deletes all markers in the array by removing references to them.
+  function deleteMarkers() {
+    clearMarkers();
+    markers = [];
+  }
+
   //---Violent Crime Mapper----//
   //KS: TODO: THERE SHOULD BE A LESS HACKY WAY TO DO THIS.
   $('#violence').click(function() {
     $(".loader").fadeOut("slow");
     $(':checkbox').prop('checked', false);
     $("[id='Aggravated Assault']").prop('checked', true);
-    loadGeoJSON('Aggravated Assault');
+    renderMap('Aggravated Assault');
     $('#Homicide').prop('checked', true);
-    loadGeoJSON('Homicide');
+    renderMap('Homicide');
     $('#Rape').prop('checked', true);
-    loadGeoJSON('Rape')
+    renderMap('Rape')
     $('#Robbery').prop('checked', true);
-    loadGeoJSON('Robbery');
+    renderMap('Robbery');
   });
   
   //----Clear all selections----/
   //KS: HACK ALERT
   $('#clear').click(function(){
     $(':checkbox').prop('checked', false);
-    map.getLayers.forEach(function(layer){
-      if (layer.get('name') !== 'main') {
-        layer.setVisible(false);
-      }
+    deleteMarkers();
     });
+
   });
 
-});
